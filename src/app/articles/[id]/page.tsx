@@ -9,7 +9,7 @@ import {submission,PostDetailResponse } from "@/Type";
 
 export default  function  PostDetail({params}:{params:{id:string}}) {
   const { id } = params;
-  const [post,setPost]=useState<submission|null>(null);
+  const [post,setPost]=useState<Submission|null>(null);
   const [error,setError]=useState(true);
   const [loading,setLoading]=useState(true);
   
