@@ -2,34 +2,47 @@
 
 import { useState, useEffect } from 'react'
 import  Link  from  "next/link";
-import {Submission,SubmissionResponse} from '@/Type';
+import {MicroCmsPost} from '@/MicroCmsPost';
+
+
 
 
 
 
 export default function Articles() {
-  const [posts, setPosts] = useState<Submission[]>([]);
+  const [posts, setPosts] = useState<MicroCmsPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error,setError]=useState(false);
 
+
+
+
   useEffect(() => {
     const fetcher = async () => {
-      try {
-        const res = await fetch("https://1hmfpsvto6.execute-api.ap-northeast-1.amazonaws.com/dev/posts");
-        
-        if(!res.ok){
-          setError(true);
-        }else{
-        　const data:SubmissionResponse = await res.json() ;
-        　setPosts(data.posts);
-      } catch (error) {
+        const res = await fetch('<https://2gzszlwapo.microcms.io/api/v1/posts>', {
+        headers: {
+           'X-MICROCMS-API-KEY': 'fk1MtmkzB6i8i8PbClk7joBwSb5BdFVHOjQ9';
+        };
+    })
+       
+   if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await res.json(); 
+        setPosts(data.contents);
+      } catch (e) {
         setError(true);
       } finally {
-        setLoading(false);
+        setLoading(false); 
       }
     };
+
     fetcher();
   }, []);
+
+
+
 
   if (loading) return <p>読み込み中...</p>;
   if (error) return <p>記事が見つかりませんでした</p>

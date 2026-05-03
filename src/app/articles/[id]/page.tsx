@@ -2,38 +2,44 @@
 
 import {useState,useEffect} from 'react';
 import  Link from "next/link";
-import {submission,PostDetailResponse } from "@/Type";
+import {MicroCmsPost} from "@/MicroCmsPost";
 
 
 
 
 export default  function  PostDetail({params}:{params:{id:string}}) {
   const { id } = params;
-  const [post,setPost]=useState<Submission|null>(null);
+  const [post,setPost]=useState<MicroCmsPost|null>(null);
   const [error,setError]=useState(true);
   const [loading,setLoading]=useState(true);
   
   useEffect(()=>{
     const fetcher=async()=>{
-      try{
-        const res = await fetch(`https://1hmfpsvto6.execute-api.ap-northeast-1.amazonaws.com/dev/posts/${id}`,
-        ); 
+        setLoading(true)
+        const res = await fetch(
+          'https://2gzszlwapo.microcms.io/api/v1/posts/${id}',
+          {
+            headers:{
+              'X-MICROCMS-API-KEY': 'fk1MtmkzB6i8i8PbClk7joBwSb5BdFVHOjQ9';
+            };
+          };
+        )
 
         if (!res.ok) {
           setError(true);
          }else{
-　　　　　　const data:PostDetailResponse = await res.json() ;
-           setPost(data.post);   
+　　　　　　const data = await res.json() ;
+           setPost(data);   
          }      
-      }catch(e){
-        setError(true);
-      }finally{
-        setLoading(false);
-      }
-    };
+         }catch(e){
+         setError(true);
+         }finally{
+         setLoading(false);
+       }
+     };
 
     fetcher();
-  },[id]);
+  },[id])
  
 
 
