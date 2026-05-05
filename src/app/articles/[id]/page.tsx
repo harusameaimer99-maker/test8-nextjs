@@ -1,30 +1,71 @@
-import { SubmissionResponse } from "@/Type";
-import Link from "next/link";
+'use client'
 
-export default async function ArticlesPage() {
-  const res = await fetch("https://1hmfpsvto6.execute-api.ap-northeast-1.amazonaws.com/dev/posts", {
-    cache: "no-store", 
-  });
-  const data: SubmissionResponse = await res.json();
-  const posts = data.posts;
+import {useState,useEffect} from 'react';
+import  Link from "next/link";
+import {MicroCmsPost} from "@/MicroCmsPost";
+
+
+
+
+export default  function  PostDetail({params}:{params:{id:string}}) {
+  const { id } = params;
+  const [post,setPost]=useState<MicroCmsPost|null>(null);
+  const [error,setError]=useState(true);
+  const [loading,setLoading]=useState(true);
+  
+  useEffect(()=>{
+    const fetcher=async()=>{
+        setLoading(true)
+        const res = await fetch(
+          'https://2gzszlwapo.microcms.io/api/v1/posts/${id}',
+          {
+            headers:{
+              'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY || ''
+            };
+          };
+        )
+
+        if (!res.ok) {
+          setError(true);
+         }else{
+　　　　　　const data = await res.json() ;
+           setPost(data);   
+         }      
+         }catch(e){
+         setError(true);
+         }finally{
+         setLoading(false);
+       }
+     };
+
+    fetcher();
+  },[id])
+ 
+
+
+
+  
+  if(loading)return <p>読み込み中...</p>
+
+  if(error||!post){
+    return(
+      <div>
+        <h2>記事が見つかりませんでした</h2>
+        <Link href="/articles">記事一覧に戻る</Link>
+      </div>
+    );
+  }
+
+
+
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1 >
-        記事一覧
-      </h1>
-      <div >
-        {posts.map((post) => (
-          <div key={post.id}>
-            <Link href={`/articles/${post.id}`}>
-              {post.title}
-            </Link>
-            <p >
-              投稿日: {new Date(post.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-        ))}
-      </div>
+    <div>
+      <h1>{post.title}</h1>
+      <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+      <div dangerouslySetInnerHTML={{ __html: post.content}} />
+      <br />
+      <Link href="/articles">記事一覧に戻る</Link>
     </div>
   );
 }
