@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import  Link  from  "next/link";
 import {MicroCmsPost} from '@/MicroCmsPost';
+import {Submission} from '@Type'
 
 
 
@@ -21,15 +22,15 @@ export default function Articles() {
     const fetcher = async () => {
         const res = await fetch('<https://2gzszlwapo.microcms.io/api/v1/posts>', {
         headers: {
-           'X-MICROCMS-API-KEY': 'fk1MtmkzB6i8i8PbClk7joBwSb5BdFVHOjQ9';
-        };
+           'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY || ''
+        }
     })
        
    if (!res.ok) {
           throw new Error('Network response was not ok');
         }
 
-        const data = await res.json(); 
+        const data:Submission = await res.json(); 
         setPosts(data.contents);
       } catch (e) {
         setError(true);

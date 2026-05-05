@@ -20,7 +20,7 @@ export default  function  PostDetail({params}:{params:{id:string}}) {
           'https://2gzszlwapo.microcms.io/api/v1/posts/${id}',
           {
             headers:{
-              'X-MICROCMS-API-KEY': 'fk1MtmkzB6i8i8PbClk7joBwSb5BdFVHOjQ9';
+              'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY || ''
             };
           };
         )
